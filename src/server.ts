@@ -7,6 +7,9 @@ import { fetchLatestLogsSchema, fetchLatestLogs } from "./tools/fetchLatestLogs.
 import { getLogContentSchema, getLogContent } from "./tools/getLogContent.js";
 import { manageTraceFlagsSchema, manageTraceFlags } from "./tools/manageTraceFlags.js";
 import { deleteDebugLogsSchema, deleteDebugLogs } from "./tools/deleteDebugLogs.js";
+import { searchLogsSchema, searchLogs } from "./tools/searchLogs.js";
+import { compareLogsSchema, compareLogs } from "./tools/compareLogs.js";
+import { analyzeLogSchema, analyzeLog } from "./tools/analyzeLog.js";
 import { classifySfError } from "./utils/errors.js";
 
 export class SfLogMcpServer {
@@ -17,7 +20,7 @@ export class SfLogMcpServer {
     this.config = config;
     this.server = new McpServer({
       name: "sf-log-mcp",
-      version: "0.2.0",
+      version: "0.3.0",
     });
 
     this.registerTools();
@@ -151,6 +154,81 @@ export class SfLogMcpServer {
         } catch (error) {
           return {
             content: [{ type: "text" as const, text: `Error deleting debug logs: ${classifySfError(error)}` }],
+            isError: true,
+          };
+        }
+      },
+    );
+
+    // Tool 7: search_logs
+    this.server.tool(
+      "search_logs",
+      "Search across all downloaded debug log files for a text or regex pattern. Returns matching lines with context. Use this to find specific errors, class names, or patterns across multiple logs without reading each one individually.",
+      searchLogsSchema,
+      async (params) => {
+        try {
+          const result = await searchLogs(params);
+          return {
+            content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+          };
+        } catch (error) {
+          return {
+            content: [
+              {
+                type: "text" as const,
+                text: `Error searching logs: ${error instanceof Error ? error.message : String(error)}`,
+              },
+            ],
+            isError: true,
+          };
+        }
+      },
+    );
+
+    // Tool 8: compare_logs
+    this.server.tool(
+      "compare_logs",
+      "Compare two debug logs side-by-side. Diffs governor limits, SOQL query counts, callout results, and exception counts. Use for before/after optimization analysis or regression detection.",
+      compareLogsSchema,
+      async (params) => {
+        try {
+          const result = await compareLogs(params);
+          return {
+            content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+          };
+        } catch (error) {
+          return {
+            content: [
+              {
+                type: "text" as const,
+                text: `Error comparing logs: ${error instanceof Error ? error.message : String(error)}`,
+              },
+            ],
+            isError: true,
+          };
+        }
+      },
+    );
+
+    // Tool 9: analyze_log
+    this.server.tool(
+      "analyze_log",
+      "Get a complete health analysis of a debug log in one call. Returns health score (0-100), governor limit status, SOQL/DML/callout/exception counts, critical issues, and warnings. Start here for a quick overview before diving into specific sections with get_log_content.",
+      analyzeLogSchema,
+      async (params) => {
+        try {
+          const result = await analyzeLog(params);
+          return {
+            content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+          };
+        } catch (error) {
+          return {
+            content: [
+              {
+                type: "text" as const,
+                text: `Error analyzing log: ${error instanceof Error ? error.message : String(error)}`,
+              },
+            ],
             isError: true,
           };
         }
