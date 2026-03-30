@@ -31,3 +31,15 @@ export async function fileExists(filePath: string): Promise<boolean> {
     return false;
   }
 }
+
+export async function listLogFiles(dirPath: string): Promise<string[]> {
+  const resolved = path.resolve(dirPath);
+  try {
+    const entries = await fs.readdir(resolved);
+    return entries
+      .filter((e) => e.endsWith(".log"))
+      .map((e) => path.join(resolved, e));
+  } catch {
+    return [];
+  }
+}
