@@ -73,6 +73,38 @@ export async function downloadLogBody(connection: Connection, logId: string): Pr
   return body as string;
 }
 
+export async function deleteLog(connection: Connection, logId: string): Promise<void> {
+  await connection.tooling.delete("ApexLog", logId);
+}
+
+export async function deleteLogsBatch(
+  connection: Connection,
+  logIds: string[],
+): Promise<{ deleted: string[]; failed: Array<{ id: string; error: string }> }> {
+  const deleted: string[] = [];
+  const failed: Array<{ id: string; error: string }> = [];
+
+  // Tooling API composite supports up to 25 per request; process in chunks
+  const chunkSize = 25;
+  for (let i = 0; i < logIds.length; i += chunkSize) {
+    const chunk = logIds.slice(i, i + chunkSize);
+    const promises = chunk.map(async (id) => {
+      try {
+        await connection.tooling.delete("ApexLog", id);
+        deleted.push(id);
+      } catch (error) {
+        failed.push({
+          id,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    });
+    await Promise.all(promises);
+  }
+
+  return { deleted, failed };
+}
+
 function escapeSoql(value: string): string {
   return value.replace(/'/g, "\\'");
 }
