@@ -5,6 +5,9 @@ import { listDebugLogsSchema, listDebugLogs } from "./tools/listDebugLogs.js";
 import { fetchDebugLogSchema, fetchDebugLog } from "./tools/fetchDebugLog.js";
 import { fetchLatestLogsSchema, fetchLatestLogs } from "./tools/fetchLatestLogs.js";
 import { getLogContentSchema, getLogContent } from "./tools/getLogContent.js";
+import { manageTraceFlagsSchema, manageTraceFlags } from "./tools/manageTraceFlags.js";
+import { deleteDebugLogsSchema, deleteDebugLogs } from "./tools/deleteDebugLogs.js";
+import { classifySfError } from "./utils/errors.js";
 
 export class SfLogMcpServer {
   private server: McpServer;
@@ -14,7 +17,7 @@ export class SfLogMcpServer {
     this.config = config;
     this.server = new McpServer({
       name: "sf-log-mcp",
-      version: "0.1.0",
+      version: "0.2.0",
     });
 
     this.registerTools();
@@ -34,12 +37,7 @@ export class SfLogMcpServer {
           };
         } catch (error) {
           return {
-            content: [
-              {
-                type: "text" as const,
-                text: `Error listing debug logs: ${error instanceof Error ? error.message : String(error)}`,
-              },
-            ],
+            content: [{ type: "text" as const, text: `Error listing debug logs: ${classifySfError(error)}` }],
             isError: true,
           };
         }
@@ -63,12 +61,7 @@ export class SfLogMcpServer {
           };
         } catch (error) {
           return {
-            content: [
-              {
-                type: "text" as const,
-                text: `Error fetching debug log: ${error instanceof Error ? error.message : String(error)}`,
-              },
-            ],
+            content: [{ type: "text" as const, text: `Error fetching debug log: ${classifySfError(error)}` }],
             isError: true,
           };
         }
@@ -92,12 +85,7 @@ export class SfLogMcpServer {
           };
         } catch (error) {
           return {
-            content: [
-              {
-                type: "text" as const,
-                text: `Error fetching latest logs: ${error instanceof Error ? error.message : String(error)}`,
-              },
-            ],
+            content: [{ type: "text" as const, text: `Error fetching latest logs: ${classifySfError(error)}` }],
             isError: true,
           };
         }
@@ -123,6 +111,46 @@ export class SfLogMcpServer {
                 text: `Error reading log content: ${error instanceof Error ? error.message : String(error)}`,
               },
             ],
+            isError: true,
+          };
+        }
+      },
+    );
+
+    // Tool 5: manage_trace_flags
+    this.server.tool(
+      "manage_trace_flags",
+      "Manage Salesforce trace flags and debug levels. Actions: list (show all trace flags with active status), create (start tracing a user — use tracedEntityId='me' for current user), update (extend expiration), delete (remove a trace flag). Trace flags are required for debug log generation — no trace flag means no logs.",
+      manageTraceFlagsSchema,
+      async (params) => {
+        try {
+          const result = await manageTraceFlags(this.config.allowedOrgs, params);
+          return {
+            content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+          };
+        } catch (error) {
+          return {
+            content: [{ type: "text" as const, text: `Error managing trace flags: ${classifySfError(error)}` }],
+            isError: true,
+          };
+        }
+      },
+    );
+
+    // Tool 6: delete_debug_logs
+    this.server.tool(
+      "delete_debug_logs",
+      "Delete debug logs from a Salesforce org. Supports: specific IDs, all logs, logs older than N minutes, or filter by user/operation. Use dryRun=true to preview before deleting. Useful for cleanup after investigation or to free storage.",
+      deleteDebugLogsSchema,
+      async (params) => {
+        try {
+          const result = await deleteDebugLogs(this.config.allowedOrgs, params);
+          return {
+            content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+          };
+        } catch (error) {
+          return {
+            content: [{ type: "text" as const, text: `Error deleting debug logs: ${classifySfError(error)}` }],
             isError: true,
           };
         }
