@@ -29,7 +29,7 @@ const DEFAULT_DEBUG_LEVEL: Required<DebugLevelConfig> = {
 
 export async function listTraceFlags(connection: Connection): Promise<TraceFlagRecord[]> {
   const result = await connection.tooling.query<TraceFlagRecord>(
-    "SELECT Id, TracedEntityId, DebugLevelId, ExpirationDate, LogType, StartDate " +
+    "SELECT Id, TracedEntityId, TracedEntity.Name, DebugLevelId, ExpirationDate, LogType, StartDate " +
       "FROM TraceFlag ORDER BY ExpirationDate DESC",
   );
   return result.records;
@@ -81,6 +81,22 @@ export async function createTraceFlag(
     traceFlagId: traceFlagResult.id,
     debugLevelId: debugLevelResult.id,
   };
+}
+
+export async function updateTraceFlag(
+  connection: Connection,
+  traceFlagId: string,
+  expirationMinutes: number,
+): Promise<void> {
+  const cappedMinutes = Math.min(Math.max(expirationMinutes, 1), 1440);
+  const now = new Date();
+  const expirationDate = new Date(now.getTime() + cappedMinutes * 60000).toISOString();
+
+  await connection.tooling.update("TraceFlag", {
+    Id: traceFlagId,
+    StartDate: now.toISOString(),
+    ExpirationDate: expirationDate,
+  });
 }
 
 export async function deleteTraceFlag(connection: Connection, traceFlagId: string): Promise<void> {
