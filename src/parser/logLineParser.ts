@@ -1,8 +1,9 @@
 import type { ParsedLogLine } from "./types.js";
 
-// Matches: HH:MM:SS.mmm (nanos)|EVENT_TYPE|[line]|details
+// Matches: HH:MM:SS.m[mm] (nanos)|EVENT_TYPE|[line]|details
+// Salesforce timestamps can have 1-3 decimal digits (e.g. 12:22:49.1 or 12:22:49.363)
 const LOG_LINE_REGEX =
-  /^(\d{2}:\d{2}:\d{2}\.\d{3})\s*\((\d+)\)\|([A-Z_]+)\|(?:\[(\d+)\]\|)?(.*)$/;
+  /^(\d{2}:\d{2}:\d{2}\.\d{1,3})\s*\((\d+)\)\|([A-Z_]+)\|(?:\[(\d+)\]\|)?(.*)$/;
 
 export function parseLogLine(raw: string): ParsedLogLine | null {
   const match = raw.match(LOG_LINE_REGEX);
