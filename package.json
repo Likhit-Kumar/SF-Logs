@@ -1,7 +1,7 @@
 {
   "name": "sf-log-mcp",
-  "version": "0.1.0",
-  "description": "MCP server that fetches, manages, and AI-analyzes Salesforce debug logs",
+  "version": "1.0.0",
+  "description": "MCP server that fetches, manages, and AI-analyzes Salesforce debug logs — detects silent failures that Status='Success' hides",
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
@@ -36,12 +36,16 @@
   ],
   "author": "Likhit Kumar VP",
   "license": "BSD-3-Clause",
+  "homepage": "https://github.com/Likhit-Kumar/SF-Logs#readme",
+  "bugs": {
+    "url": "https://github.com/Likhit-Kumar/SF-Logs/issues"
+  },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/Likhit-Kumar/SF-Logs.git"
   },
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=18"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
