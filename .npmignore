@@ -1,0 +1,17 @@
+src/
+test/
+docs/
+sf-logs/
+.github/
+.vscode/
+.idea/
+.eslintrc*
+eslint.config.js
+jest.config.js
+tsconfig.json
+.prettierrc
+.prettierignore
+.DS_Store
+*.log
+coverage/
+*.tsbuildinfo
