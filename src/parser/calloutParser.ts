@@ -30,7 +30,10 @@ export function parseCallouts(lines: ParsedLogLine[]): CalloutEntry[] {
 }
 
 function parseCalloutRequest(details: string): { endpoint: string; method: string } {
-  const endpointMatch = details.match(/Endpoint=(https?:\/\/[^\s,\]]+)/);
+  // Endpoint URLs may contain encoded characters like %2C (commas), so we can't stop at comma.
+  // Format: System.HttpRequest[Endpoint=https://..., Method=GET]
+  // Match everything between Endpoint= and the last ", Method=" before the closing bracket.
+  const endpointMatch = details.match(/Endpoint=(https?:\/\/.+?)(?:,\s*Method=|\]|$)/);
   const methodMatch = details.match(/Method=(\w+)/);
   return {
     endpoint: endpointMatch?.[1] ?? "unknown",
