@@ -7,7 +7,7 @@ export function parseSoqlQueries(lines: ParsedLogLine[]): SoqlEntry[] {
     const line = lines[i];
     if (line.eventType !== "SOQL_EXECUTE_BEGIN") continue;
 
-    const query = extractQuery(line.details);
+    const { query, aggregations } = extractQueryAndAggregations(line.details);
 
     // Look for corresponding SOQL_EXECUTE_END
     const endLine = findMatchingEnd(lines, i, "SOQL_EXECUTE_END");
@@ -18,18 +18,20 @@ export function parseSoqlQueries(lines: ParsedLogLine[]): SoqlEntry[] {
       timestamp: line.timestamp,
       query,
       rowCount,
-      aggregations: 0,
+      aggregations,
     });
   }
 
   return entries;
 }
 
-function extractQuery(details: string): string {
-  // The query text usually follows the aggregations count
+function extractQueryAndAggregations(details: string): { query: string; aggregations: number } {
   // Format: Aggregations:0|SELECT Id, Name FROM Account WHERE ...
+  const aggMatch = details.match(/Aggregations:(\d+)/);
+  const aggregations = aggMatch ? parseInt(aggMatch[1], 10) : 0;
   const pipeIndex = details.indexOf("|");
-  return pipeIndex !== -1 ? details.substring(pipeIndex + 1).trim() : details.trim();
+  const query = pipeIndex !== -1 ? details.substring(pipeIndex + 1).trim() : details.trim();
+  return { query, aggregations };
 }
 
 function extractRowCount(details: string): number {
