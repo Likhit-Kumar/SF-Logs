@@ -20,7 +20,7 @@ export class SfLogMcpServer {
     this.config = config;
     this.server = new McpServer({
       name: "sf-log-mcp",
-      version: "0.3.0",
+      version: "1.0.0",
     });
 
     this.registerTools();
