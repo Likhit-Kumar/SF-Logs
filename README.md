@@ -32,8 +32,8 @@ Add this to your MCP client's configuration:
 {
   "mcpServers": {
     "sf-log-mcp": {
-      "command": "node",
-      "args": ["/absolute/path/to/SF-Logs/dist/index.js", "--allowed-orgs", "ALLOW_ALL_ORGS"]
+      "command": "npx",
+      "args": ["-y", "sf-log-mcp", "--allowed-orgs", "ALLOW_ALL_ORGS"]
     }
   }
 }
@@ -44,8 +44,8 @@ Add this to your MCP client's configuration:
 {
   "servers": {
     "sf-log-mcp": {
-      "command": "node",
-      "args": ["/absolute/path/to/SF-Logs/dist/index.js", "--allowed-orgs", "ALLOW_ALL_ORGS"]
+      "command": "npx",
+      "args": ["-y", "sf-log-mcp", "--allowed-orgs", "ALLOW_ALL_ORGS"]
     }
   }
 }
@@ -56,8 +56,8 @@ Add this to your MCP client's configuration:
 {
   "mcpServers": {
     "sf-log-mcp": {
-      "command": "node",
-      "args": ["/absolute/path/to/SF-Logs/dist/index.js", "--allowed-orgs", "ALLOW_ALL_ORGS"]
+      "command": "npx",
+      "args": ["-y", "sf-log-mcp", "--allowed-orgs", "ALLOW_ALL_ORGS"]
     }
   }
 }
@@ -418,10 +418,10 @@ sf-log-mcp classifies Salesforce API errors into actionable messages:
 
 ## Roadmap
 
-- [ ] CI/CD pipeline (GitHub Actions)
-- [ ] npm publish as `sf-log-mcp`
-- [ ] MCP Inspector testing
-- [ ] Client compatibility testing (Claude Desktop, VS Code, Cursor, Windsurf)
+- [x] CI/CD pipeline (GitHub Actions)
+- [x] npm publish as `sf-log-mcp`
+- [x] MCP Inspector testing
+- [x] Client compatibility testing (Claude Desktop, VS Code, Cursor)
 
 ---
 
