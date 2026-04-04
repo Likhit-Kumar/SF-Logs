@@ -1,5 +1,4 @@
 import type { ParsedLogLine, ExceptionEntry } from "./types.js";
-import { filterByEventType } from "./logLineParser.js";
 
 export function parseExceptions(lines: ParsedLogLine[]): ExceptionEntry[] {
   const entries: ExceptionEntry[] = [];

@@ -48,7 +48,7 @@ export async function analyzeLog(params: { filePath: string }) {
   // Governor limits analysis
   const criticalLimits: string[] = [];
   const warningLimits: string[] = [];
-  for (const [key, limit] of Object.entries(limits)) {
+  for (const [, limit] of Object.entries(limits)) {
     const l = limit as { name: string; used: number; max: number; percent: number; status: string };
     if (l.status === "CRITICAL") criticalLimits.push(`${l.name}: ${l.used}/${l.max} (${l.percent}%)`);
     else if (l.status === "WARNING") warningLimits.push(`${l.name}: ${l.used}/${l.max} (${l.percent}%)`);

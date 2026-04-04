@@ -1,5 +1,5 @@
 import { Connection } from "@salesforce/core";
-import type { ApexLogRecord, ApexLogQueryResult } from "./types.js";
+import type { ApexLogRecord } from "./types.js";
 
 export interface ListLogsOptions {
   limit?: number;

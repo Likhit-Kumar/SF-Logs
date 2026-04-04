@@ -1,5 +1,5 @@
 import { Connection } from "@salesforce/core";
-import type { TraceFlagRecord, DebugLevelRecord, LogLevel } from "./types.js";
+import type { TraceFlagRecord, LogLevel } from "./types.js";
 
 export interface DebugLevelConfig {
   apexCode?: LogLevel;

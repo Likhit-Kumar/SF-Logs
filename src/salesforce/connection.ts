@@ -30,7 +30,7 @@ export async function getOrgConnection(
   return { org, connection };
 }
 
-function validateOrgAccess(allowedOrgs: string[], username: string, org: Org): void {
+function validateOrgAccess(allowedOrgs: string[], username: string, _org: Org): void {
   for (const allowed of allowedOrgs) {
     if (allowed === ORG_TOKENS.ALLOW_ALL_ORGS) return;
     if (allowed === ORG_TOKENS.DEFAULT_TARGET_ORG) return;
