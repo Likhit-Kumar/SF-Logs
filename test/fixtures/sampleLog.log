@@ -1,0 +1,32 @@
+66.0 APEX_CODE,FINE;APEX_PROFILING,FINE;CALLOUT,DEBUG;DATABASE,FINEST;SYSTEM,DEBUG;VALIDATION,DEBUG;VISUALFORCE,FINE;WORKFLOW,FINE
+Execute Anonymous: Account[] accts = [SELECT Id, Name FROM Account LIMIT 5];
+Execute Anonymous: System.debug('Found accounts: ' + accts.size());
+10:15:00.010 (10234567)|SOQL_EXECUTE_BEGIN|[1]|Aggregations:0|SELECT Id, Name FROM Account LIMIT 5
+10:15:00.025 (25678901)|SOQL_EXECUTE_END|[1]|Rows:5
+10:15:00.030 (30123456)|USER_DEBUG|[2]|DEBUG|Found accounts: 5
+10:15:00.050 (50234123)|CALLOUT_REQUEST|[45]|System.HttpRequest[Endpoint=https://api.vendor.com/sync, Method=POST]
+10:15:01.230 (1230456789)|CALLOUT_RESPONSE|[45]|StatusCode=200, Status=OK|{"status":"failed","error":"duplicate record"}
+10:15:01.235 (1235000000)|USER_DEBUG|[48]|DEBUG|Response: {"status":"failed","error":"duplicate record"}
+10:15:01.240 (1240000000)|METHOD_EXIT|[48]|IntegrationService.sendToVendor()
+10:15:01.500 (1500000000)|DML_BEGIN|[60]|Op:Insert|Type:Account|Rows:3
+10:15:01.520 (1520000000)|DML_END|[60]
+10:15:01.800 (1800000000)|EXCEPTION_THROWN|[78]|System.NullPointerException: Attempt to de-reference a null object
+10:15:01.810 (1810000000)|METHOD_EXIT|[80]|AccountService.processRecords()
+10:15:02.000 (2000000000)|LIMIT_USAGE_FOR_NS|(default)|
+  Number of SOQL queries: 85 out of 100
+  Number of query rows: 847 out of 50000
+  Number of SOSL queries: 0 out of 20
+  Number of DML statements: 42 out of 150
+  Number of DML rows: 3200 out of 10000
+  Maximum CPU time: 9200 out of 10000
+  Maximum heap size: 4800000 out of 6000000
+  Number of callouts: 8 out of 100
+  Number of future calls: 3 out of 50
+  Number of queueable jobs added to the queue: 0 out of 50
+  Number of Mobile Apex push calls: 0 out of 10
+10:15:02.100 (2100000000)|FLOW_START_INTERVIEWS_BEGIN|1
+10:15:02.110 (2110000000)|FLOW_START_INTERVIEW_BEGIN|Welcome_Email_Flow
+10:15:02.120 (2120000000)|FLOW_ELEMENT_BEGIN|Check_Record_Type
+10:15:02.130 (2130000000)|FLOW_ELEMENT_END|Check_Record_Type
+10:15:02.140 (2140000000)|FLOW_START_INTERVIEW_END|Welcome_Email_Flow
+10:15:02.150 (2150000000)|FLOW_START_INTERVIEWS_END|1

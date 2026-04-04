@@ -28,6 +28,7 @@ sf-logs/
 coverage/
 test-output/
 *.log
+!test/fixtures/*.log
 
 # npm
 *.tgz
